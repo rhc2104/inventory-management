@@ -12,7 +12,7 @@
     :class="{ collapsed: isCollapsed, 'is-overlay': isOverlay, 'overlay-open': isOverlay && overlayOpen }"
   >
     <div class="brand">
-      <div v-if="!isCollapsed" class="brand-text">
+      <div v-if="showLabels" class="brand-text">
         <h1 class="brand-name">{{ t('nav.companyName') }}</h1>
         <span class="brand-subtitle">{{ t('nav.subtitle') }}</span>
       </div>
@@ -20,7 +20,7 @@
       <button
         type="button"
         class="toggle-btn"
-        :aria-expanded="!isCollapsed"
+        :aria-expanded="isOverlay ? overlayOpen : !isCollapsed"
         aria-label="Toggle sidebar"
         @click="toggle"
       >
@@ -51,7 +51,7 @@
         :title="item.label"
       >
         <NavIcon :name="item.icon" class="nav-icon" />
-        <span v-if="!isCollapsed" class="nav-label">{{ item.label }}</span>
+        <span v-if="showLabels" class="nav-label">{{ item.label }}</span>
       </router-link>
     </nav>
 
@@ -77,6 +77,13 @@ const emit = defineEmits(['show-profile-details', 'show-tasks'])
 
 const { isCollapsed, isOverlay, overlayOpen, toggle, closeOverlay } = useSidebar()
 const { t } = useI18n()
+
+// isOverlay always implies isCollapsed (useSidebar's breakpoints: overlay
+// only kicks in below 640px, well inside the <1024px collapse range), so
+// gating on !isCollapsed alone would make the open mobile drawer an
+// unlabeled icon rail. The open drawer is a full labeled menu; only the
+// closed/off-canvas and desktop-collapsed rail states hide labels.
+const showLabels = computed(() => !isCollapsed.value || (isOverlay.value && overlayOpen.value))
 
 // /reports has no i18n key in the current app (App.vue hardcodes the English
 // literal) — preserved as-is rather than inventing nav.reports.
@@ -133,7 +140,12 @@ const navItems = computed(() => [
   z-index: 200;
 }
 
+/* The open drawer now shows full labels (see showLabels), so it can no
+   longer just inherit the 64px width .collapsed happens to also set — it
+   needs its own explicit full width rather than depending on the
+   isOverlay-implies-isCollapsed invariant holding forever. */
 .sidebar.is-overlay.overlay-open {
+  width: var(--sidebar-w);
   transform: translateX(0);
   box-shadow: var(--shadow-overlay);
 }
@@ -149,6 +161,13 @@ const navItems = computed(() => [
 
 .sidebar.collapsed .brand {
   justify-content: center;
+}
+
+/* The open overlay drawer shows the brand text again (see showLabels), so it
+   needs the same space-between layout as the expanded rail, not the
+   collapsed rail's centered icon-only layout. */
+.sidebar.is-overlay.overlay-open .brand {
+  justify-content: space-between;
 }
 
 .brand-text {
@@ -223,6 +242,14 @@ const navItems = computed(() => [
 .sidebar.collapsed .nav-link {
   justify-content: center;
   padding: var(--sp-2);
+}
+
+/* Same reasoning as .brand above: the open overlay drawer shows nav labels,
+   so links need the expanded rail's left-aligned layout, not the collapsed
+   rail's centered icon-only layout. */
+.sidebar.is-overlay.overlay-open .nav-link {
+  justify-content: flex-start;
+  padding: var(--sp-2) var(--sp-3);
 }
 
 .nav-link:hover {
