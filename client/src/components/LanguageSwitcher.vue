@@ -2,6 +2,8 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      :class="{ compact }"
+      :aria-label="compact ? localeName : null"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
@@ -17,8 +19,9 @@
         <path d="M10 3C10 3 7.5 5.5 7.5 10C7.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
         <path d="M10 3C10 3 12.5 5.5 12.5 10C12.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
       </svg>
-      <span class="language-label">{{ localeName }}</span>
+      <span v-if="!compact" class="language-label">{{ localeName }}</span>
       <svg
+        v-if="!compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -58,6 +61,13 @@
 import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
 
 const isDropdownOpen = ref(false)
@@ -96,8 +106,11 @@ const selectLanguage = (locale) => {
 .language-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
+  width: 100%;
+  gap: var(--sp-2);
+  /* 0.875rem (14px) is equidistant between --sp-3/--sp-4; rounded down to
+     --sp-3, matching ProfileMenu's trigger padding. */
+  padding: var(--sp-2) var(--sp-3);
   background: transparent;
   border: 1px solid var(--side-border);
   border-radius: var(--r-md);
@@ -110,6 +123,15 @@ const selectLanguage = (locale) => {
 
 .language-button:hover {
   background: var(--side-hover);
+}
+
+/* Same fix as ProfileMenu's .profile-button.compact: icon-only so the
+   trigger fits inside the 64px collapsed rail instead of bleeding over the
+   content area. */
+.language-button.compact {
+  justify-content: center;
+  gap: 0;
+  padding: var(--sp-1) 0;
 }
 
 .globe-icon {
@@ -167,7 +189,7 @@ const selectLanguage = (locale) => {
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .dropdown-item.active {

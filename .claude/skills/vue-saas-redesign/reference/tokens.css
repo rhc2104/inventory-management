@@ -42,7 +42,9 @@
 
   /* Sidebar dark ramp, derived from ink */
   --side-bg: #0f172a;
-  --side-border: #1e293b;
+  /* Lightened one step past --side-hover so a hovered nav link next to the
+     footer border doesn't make the border seam disappear. */
+  --side-border: #2d3748;
   --side-ink: #e2e8f0;
   --side-muted: #94a3b8;
   --side-hover: #1e293b;
@@ -65,5 +67,4 @@
   /* Layout */
   --sidebar-w: 240px;
   --sidebar-w-collapsed: 64px;
-  --toolbar-h: 52px;
 }

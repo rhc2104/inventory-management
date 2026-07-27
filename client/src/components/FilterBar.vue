@@ -1,6 +1,35 @@
 <template>
   <div class="filters-bar">
     <div class="filters-container">
+      <!-- Below 640px the sidebar is off-canvas (transform: translateX(-100%)
+           takes its own toggle button with it), so this is the only trigger
+           reachable from the content column. It lives in this sticky toolbar
+           rather than loose in App.vue so it stays reachable while scrolled. -->
+      <button
+        v-if="isOverlay"
+        type="button"
+        class="menu-trigger"
+        aria-label="Toggle navigation menu"
+        :aria-expanded="overlayOpen"
+        aria-controls="app-sidebar"
+        @click="toggle"
+      >
+        <svg
+          class="menu-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
       <div class="filters-grid">
         <div class="filter-group">
           <label>{{ t('filters.timePeriod') }}</label>
@@ -72,6 +101,7 @@
 <script>
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useSidebar } from '../composables/useSidebar'
 
 export default {
   name: 'FilterBar',
@@ -86,6 +116,7 @@ export default {
     } = useFilters()
 
     const { t } = useI18n()
+    const { isOverlay, overlayOpen, toggle } = useSidebar()
 
     return {
       t,
@@ -94,7 +125,10 @@ export default {
       selectedCategory,
       selectedStatus,
       hasActiveFilters,
-      resetFilters
+      resetFilters,
+      isOverlay,
+      overlayOpen,
+      toggle
     }
   }
 }
@@ -113,12 +147,38 @@ export default {
 }
 
 .filters-container {
-  /* No max-width/margin: auto centering here — the sidebar layout already
-     constrains the content column's width, so this bar doesn't need to. */
+  /* No max-width/margin: auto here on purpose: this toolbar spans the full
+     content column edge-to-edge. The 1600px cap that keeps text content from
+     stretching on wide displays lives on .main-content in App.vue instead —
+     the sidebar only subtracts its own width, it doesn't impose a maximum. */
   padding: 0 var(--sp-5);
   display: flex;
   align-items: center;
   gap: var(--sp-4);
+}
+
+.menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sp-6);
+  height: var(--sp-6);
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.menu-trigger:hover {
+  background: var(--canvas);
+  border-color: var(--muted);
+  color: var(--ink);
+}
+.menu-icon {
+  width: var(--sp-5);
+  height: var(--sp-5);
 }
 
 .filters-grid {
@@ -152,7 +212,7 @@ export default {
 .filter-select:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 12%, transparent);
 }
 
 .reset-filters-btn {

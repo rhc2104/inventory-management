@@ -8,6 +8,7 @@
   ></div>
 
   <aside
+    id="app-sidebar"
     class="sidebar"
     :class="{ collapsed: isCollapsed, 'is-overlay': isOverlay, 'overlay-open': isOverlay && overlayOpen }"
   >
@@ -56,8 +57,9 @@
     </nav>
 
     <div class="footer">
-      <LanguageSwitcher />
+      <LanguageSwitcher :compact="!showLabels" />
       <ProfileMenu
+        :compact="!showLabels"
         @show-profile-details="emit('show-profile-details')"
         @show-tasks="emit('show-tasks')"
       />
@@ -99,15 +101,25 @@ const navItems = computed(() => [
 </script>
 
 <style scoped>
-/* rgba scrim mirrors the existing .modal-overlay pattern used across the app
-   (e.g. ProfileDetailsModal); tokens.css has no dedicated scrim color. */
+/* --ink (#0f172a) hand-expanded to a scrim; color-mix keeps it derived from
+   the token instead of a second hardcoded literal. */
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.6);
+  background: color-mix(in srgb, var(--ink) 60%, transparent);
   z-index: 190;
 }
 
+/* Stacking-context layer order for the whole app (documented once, here,
+   since .sidebar is the layer most other pieces have to reason about):
+     90   FilterBar toolbar (sticky, within .app-main)
+     100  .sidebar itself (sticky, desktop/rail) — above the toolbar so the
+          sidebar's own descendants (incl. its z-index: 1000 dropdowns) are
+          never trapped under it by stacking-context confinement
+     190  .backdrop (mobile overlay scrim)
+     200  .sidebar.is-overlay (off-canvas drawer, fixed)
+     1000 ProfileMenu / LanguageSwitcher dropdowns (children of .sidebar)
+     2000 app-level modals (ProfileDetailsModal, TasksModal, *DetailModal) */
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -117,6 +129,7 @@ const navItems = computed(() => [
   border-right: 1px solid var(--side-border);
   position: sticky;
   top: 0;
+  z-index: 100;
   flex-shrink: 0;
   transition: width 0.2s ease;
   /* Intentionally no overflow rule here: ProfileMenu's 280px dropdown and the
@@ -224,6 +237,12 @@ const navItems = computed(() => [
   gap: var(--sp-1);
   padding: var(--sp-3);
   flex: 1;
+  /* The scroll lives here, not on .sidebar: .sidebar must keep
+     overflow: visible so the footer dropdowns can escape past its edge, but
+     that means it can't clip/scroll its own content either. .nav has no
+     descendants that need to escape it, so it's the safe place to make the
+     link list reachable on short viewports without breaking the dropdowns. */
+  overflow-y: auto;
 }
 
 .nav-link {
@@ -257,9 +276,13 @@ const navItems = computed(() => [
   color: var(--side-ink);
 }
 
+/* --blue on --side-hover fails contrast (2.86:1), so the state cue is a left
+   accent bar instead of a text color — the label stays high-contrast
+   --side-ink like every other link. */
 .nav-link[aria-current='page'] {
   background: var(--side-hover);
-  color: var(--blue);
+  color: var(--side-ink);
+  box-shadow: inset 2px 0 0 var(--blue);
 }
 
 .nav-icon {

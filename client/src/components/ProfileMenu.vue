@@ -2,14 +2,17 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :class="{ compact }"
+      :aria-label="compact ? currentUser.name : null"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
       </div>
-      <span class="profile-name">{{ currentUser.name }}</span>
+      <span v-if="!compact" class="profile-name">{{ currentUser.name }}</span>
       <svg
+        v-if="!compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -78,6 +81,13 @@ import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
@@ -123,8 +133,13 @@ const handleLogout = () => {
 .profile-button {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.5rem 0.875rem;
+  width: 100%;
+  /* 0.625rem (10px) is equidistant between the --sp-2/--sp-3 steps; rounded
+     down to --sp-2 to keep the footer dense. */
+  gap: var(--sp-2);
+  /* 0.875rem (14px) is equidistant between --sp-3/--sp-4; rounded down to
+     --sp-3 for the same reason. */
+  padding: var(--sp-2) var(--sp-3);
   background: transparent;
   border: 1px solid var(--side-border);
   border-radius: var(--r-md);
@@ -136,6 +151,15 @@ const handleLogout = () => {
 
 .profile-button:hover {
   background: var(--side-hover);
+}
+
+/* Collapsed rail is 64px; the uncollapsed trigger's ~166px of min-content
+   (avatar + name + chevron + padding) doesn't fit and was bleeding ~126px
+   over the content area. Icon-only avatar keeps everything inside the rail. */
+.profile-button.compact {
+  justify-content: center;
+  gap: 0;
+  padding: var(--sp-1) 0;
 }
 
 .avatar {
@@ -186,11 +210,11 @@ const handleLogout = () => {
 }
 
 .dropdown-header {
-  padding: 1rem;
+  padding: var(--sp-4);
   display: flex;
-  gap: 0.875rem;
+  gap: var(--sp-3);
   align-items: center;
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .avatar-large {
@@ -252,7 +276,7 @@ const handleLogout = () => {
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .dropdown-item svg {
