@@ -19,10 +19,17 @@ In scope: the shell only — `App.vue`, a new sidebar and icon component, a new 
 `FilterBar.vue`, and the two nav-adjacent dropdown components.
 
 Out of scope, deliberately: the ~400 hardcoded color literals and ad-hoc spacing values inside
-the seven views' scoped styles. They inherit the new look through the global `.card`,
-`.stat-card`, `table` and `.badge` rules. Sweeping them touches 18 files and every one would need
-`vue-expert`; that is a separate follow-up the token layer makes possible. Also out of scope: dark
-mode, backend, data, routes, nav labels, i18n keys, and any Vue logic. This is presentation only.
+the scoped styles of the **eight view files and nine shared components** — 17 files, every one of
+which currently contains hex literals. They inherit the new look through the global `.card`,
+`.stat-card`, `table` and `.badge` rules, so they need no edit here. Sweeping them is a separate
+follow-up the token layer makes possible, and all 17 would need `vue-expert`.
+
+Note for whoever does that sweep: `client/src/views/` holds **eight** files but only **seven** are
+routed. `Backlog.vue` is unrouted and unimported — reachable from no URL — yet it carries the same
+hardcoded styles. Do not skip it just because it is absent from the nav.
+
+Also out of scope: dark mode, backend, data, routes, nav labels, i18n keys, and any Vue logic.
+This is presentation only.
 
 ## Design rules
 
