@@ -656,8 +656,15 @@ Requirements to state explicitly in the brief:
 
 - `<nav aria-label="Main">` landmark wrapping the links
 - `aria-current="page"` on the active `router-link`
-- toggle button with `aria-expanded` bound to `!isCollapsed` and an `aria-label`
-- when `isCollapsed`, labels are visually hidden and each link carries `:aria-label` and `:title`
+- toggle button with an `aria-label`, and `aria-expanded` bound to
+  `isOverlay ? overlayOpen : !isCollapsed`. **Not** plain `!isCollapsed`: because `useSidebar`
+  forces collapse below 1024px and overlay below 640px, `isOverlay` always implies `isCollapsed`,
+  so `!isCollapsed` would be permanently `false` in overlay mode — the one mode where the toggle
+  visibly does something.
+- labels are visually hidden when the rail is collapsed, but **must be visible when the overlay
+  drawer is open**: gate them on `!isCollapsed || (isOverlay && overlayOpen)`. Gating on
+  `!isCollapsed` alone makes the mobile drawer a 64px column of unlabeled icons, and touch users
+  cannot hover to reveal `title` tooltips. Nav links carry `:aria-label` and `:title` regardless.
 - **no `overflow: hidden` on the sidebar or its footer** — `ProfileMenu`'s dropdown is 280px wide and must escape a 64px rail
 - overlay mode: when `isOverlay && overlayOpen`, the sidebar is `position: fixed` with a backdrop that calls `closeOverlay()` on click
 - all spacing via `var(--sp-*)`, colors via `var(--side-*)`, radius via `var(--r-sm)`/`var(--r-md)`
