@@ -93,12 +93,17 @@ Backend tests must keep passing throughout as a collateral-damage guard: `cd tes
   --side-muted: #94a3b8;
   --side-hover: #1e293b;
 
-  /* Type — 5 steps */
+  /* Type — 5 steps, plus one for the oversized KPI figure */
   --fs-xs: 0.75rem;
   --fs-sm: 0.813rem;
   --fs-base: 0.875rem;
   --fs-lg: 1.125rem;
   --fs-xl: 1.5rem;
+  --fs-stat: 1.75rem;
+
+  /* Single-use tint behind .error. Tokenized so the shell can contain
+     literally zero magic numbers. */
+  --red-tint: #fef2f2;
 
   /* Exactly one shadow, for overlays and dropdowns only. Never on cards. */
   --shadow-overlay: 0 10px 25px rgba(15, 23, 42, 0.12);
@@ -423,12 +428,17 @@ git commit -m "Add design token layer and import it at app entry"
 
 - [ ] **Step 1: Create the component via vue-expert**
 
-The full component, icon paths included — do not go read Task 2 for them:
+The full component, icon paths included — do not go read Task 2 for them.
+
+Icons are static `<g v-if>` blocks rather than a `v-html` lookup. It is more
+lines, but nothing is ever rendered as raw HTML, so there is no injection surface to
+reason about and no script logic at all:
 
 ```vue
 <template>
+  <!-- currentColor means icons inherit the nav link's color, so hover and
+       active states need no separate icon rules. -->
   <svg
-    v-if="paths"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     fill="none"
@@ -437,39 +447,58 @@ The full component, icon paths included — do not go read Task 2 for them:
     stroke-linecap="round"
     stroke-linejoin="round"
     aria-hidden="true"
-    v-html="paths"
-  />
+  >
+    <g v-if="name === 'overview'">
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </g>
+    <g v-else-if="name === 'inventory'">
+      <path d="M21 8 12 3 3 8v8l9 5 9-5V8Z" />
+      <path d="M3 8l9 5 9-5" />
+      <path d="M12 13v8" />
+    </g>
+    <g v-else-if="name === 'orders'">
+      <path d="M9 3h6a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1Z" />
+      <path d="M8 5H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2" />
+      <path d="M9 11h6" />
+      <path d="M9 15h4" />
+    </g>
+    <g v-else-if="name === 'finance'">
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.5" />
+      <path d="M6 10v4" />
+      <path d="M18 10v4" />
+    </g>
+    <g v-else-if="name === 'demand'">
+      <path d="M3 17l6-6 4 4 7-7" />
+      <path d="M14 8h6v6" />
+    </g>
+    <g v-else-if="name === 'restocking'">
+      <path d="M21 12a9 9 0 1 1-3-6.7" />
+      <path d="M21 4v5h-5" />
+    </g>
+    <g v-else-if="name === 'reports'">
+      <path d="M14 2H6a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7Z" />
+      <path d="M14 2v5h5" />
+      <path d="M9 13h6" />
+      <path d="M9 17h6" />
+    </g>
+  </svg>
 </template>
 
 <script>
-import { computed } from 'vue'
-
-// Inline stroke SVG keyed by nav icon name. currentColor means icons inherit the
-// nav link's color, so hover and active states need no extra icon rules.
-const ICONS = {
-  overview: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
-  inventory: '<path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/>',
-  orders: '<path d="M9 3h6a1 1 0 0 1 1 1v1H8V4a1 1 0 0 1 1-1Z"/><path d="M8 5H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2"/><path d="M9 11h6"/><path d="M9 15h4"/>',
-  finance: '<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4"/><path d="M18 10v4"/>',
-  demand: '<path d="M3 17l6-6 4 4 7-7"/><path d="M14 8h6v6"/>',
-  restocking: '<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/>',
-  reports: '<path d="M14 2H6a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V7Z"/><path d="M14 2v5h5"/><path d="M9 13h6"/><path d="M9 17h6"/>'
-}
-
 export default {
   name: 'NavIcon',
   props: {
     name: { type: String, required: true }
-  },
-  setup(props) {
-    const paths = computed(() => ICONS[props.name] || null)
-    return { paths }
   }
 }
 </script>
 ```
 
-`v-html` here renders only the hardcoded constants above — never user or API data — so there is no injection surface.
+An unrecognized `name` renders an empty `<svg>` rather than throwing.
 
 - [ ] **Step 2: Verify the build compiles**
 
@@ -480,7 +509,7 @@ Expected: no errors.
 
 Playwright MCP, after Task 7 mounts the sidebar, will cover this in context. For now assert the constant is complete:
 
-Run: `for n in overview inventory orders finance demand restocking reports; do grep -q "  $n:" client/src/components/icons/NavIcon.vue && echo "$n OK" || echo "$n MISSING"; done`
+Run: `for n in overview inventory orders finance demand restocking reports; do grep -q "name === '$n'" client/src/components/icons/NavIcon.vue && echo "$n OK" || echo "$n MISSING"; done`
 Expected: seven `OK`.
 
 - [ ] **Step 4: Commit**
@@ -564,11 +593,14 @@ export function useSidebar() {
 }
 ```
 
-- [ ] **Step 2: Verify it parses**
+- [ ] **Step 2: Verify the syntax parses**
 
-Run: `cd client && node --input-type=module -e "import('./src/composables/useSidebar.js').then(()=>console.log('parsed')).catch(e=>{console.error(e.message);process.exit(1)})"`
-Expected: this will fail on `vue` resolution outside Vite — that is expected. Instead assert syntax only: `npx --yes esbuild src/composables/useSidebar.js --loader=js > /dev/null && echo "syntax OK"`
-Expected: `syntax OK`
+Do not try to `import()` the file directly — `vue` will not resolve outside Vite and the failure
+would be meaningless. Check syntax only:
+
+Run: `cd client && node -e "new (require('vm').Script)(require('fs').readFileSync('src/composables/useSidebar.js','utf8'),{});" 2>&1 | head -3 || true`
+Expected: no `SyntaxError`. ES module syntax will report `Cannot use import statement outside a
+module` — that message means the file parsed and is fine. Any `SyntaxError` is a real failure.
 
 - [ ] **Step 3: Verify via build**
 
@@ -721,7 +753,7 @@ Rewritten globals — note `max-width: 1600px; margin: 0 auto` is dropped from `
   margin-bottom: var(--sp-2);
 }
 .stat-value {
-  font-size: 1.75rem;
+  font-size: var(--fs-stat);
   font-weight: 680;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -800,7 +832,7 @@ tbody tr:hover { background: var(--canvas); }
   font-size: var(--fs-base);
 }
 .error {
-  background: #fef2f2;
+  background: var(--red-tint);
   border: 1px solid var(--red-bg);
   color: var(--red-ink);
   padding: var(--sp-4);
@@ -1036,8 +1068,9 @@ Expected: build succeeds; `71 passed`.
 
 - [ ] **Step 2: Magic-number guard on the shell**
 
-Run: `grep -nE "[0-9]+(\.[0-9]+)?rem|#[0-9a-fA-F]{3,8}" client/src/App.vue client/src/components/AppSidebar.vue client/src/components/FilterBar.vue | grep -vE "var\(--|letter-spacing|rgba|#fef2f2"`
-Expected: only `.stat-value`'s `1.75rem`, which is intentional and documented in Task 8. Anything else is a magic number to replace with a token.
+Run: `grep -nE "[0-9]+(\.[0-9]+)?rem|#[0-9a-fA-F]{3,8}" client/src/App.vue client/src/components/AppSidebar.vue client/src/components/FilterBar.vue | grep -vE "var\(--|letter-spacing|rgba"`
+Expected: **no output at all.** Every spacing value, color and font size in the shell resolves
+through a token — there are no whitelisted exceptions. Any hit is a magic number to tokenize.
 
 - [ ] **Step 3: All seven routes, no console errors**
 
@@ -1072,4 +1105,13 @@ If nothing needed fixing, skip the commit and note that verification passed clea
 
 **Type and name consistency.** `useSidebar()` returns exactly `{ isCollapsed, isOverlay, overlayOpen, toggle, closeOverlay }` in Task 6 and Task 7 consumes those five names. `NavIcon`'s seven names are identical in Tasks 2, 5 and 7. The `localStorage` key is `app-sidebar-collapsed` in Tasks 6 and 11. The ten `.badge` variants enumerated in Task 8 match the ten in the current `App.vue`.
 
-**Known gaps, called out rather than hidden.** Three items the spec leaves to implementation and this plan resolves by decision, not by guess: `/reports` keeps its hardcoded English label (Task 7) because adding an i18n key is out of scope; `.stat-value` keeps a literal `1.75rem` (Task 8) because it falls between type-scale steps; and `.error` keeps the literal `#fef2f2` (Task 8) because that tint has no token and adding one for a single use is not worth it. All three are whitelisted in Task 11's magic-number guard so they do not read as oversights.
+**Known gaps, called out rather than hidden.** One item the spec leaves to implementation and this plan resolves by decision: `/reports` keeps its hardcoded English label (Task 7), because adding an i18n key is out of scope and inventing one would be scope creep.
+
+**Amended after the pre-flight scan** (three rubric conflicts resolved before execution):
+
+1. Task 5 no longer uses `v-html`. Icons are static `<g v-if>` blocks, so no raw HTML is ever
+   rendered and the injection question does not arise.
+2. `--fs-stat` and `--red-tint` were added to the token set, so `.stat-value` and `.error` carry
+   no literals. Task 11's magic-number guard is now absolute — zero expected output, no whitelist
+   to defend.
+3. Task 6's syntax check no longer instructs a command that is expected to fail.
