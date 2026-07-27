@@ -7,6 +7,8 @@ export default {
     finance: '財務',
     demandForecast: '需要予測',
     restocking: '補充発注',
+    reports: 'レポート',
+    backlog: 'バックログ',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -229,6 +231,72 @@ export default {
       urgency: '緊急度'
     }
   },
+  backlog: {
+    title: 'バックログ管理',
+    description: '在庫不足を追跡し解消します',
+    highPriority: '優先度: 高',
+    mediumPriority: '優先度: 中',
+    lowPriority: '優先度: 低',
+    totalItems: 'バックログ総件数',
+    backlogItems: 'バックログ項目',
+    noItems: 'バックログはありません。すべての注文を出荷できます',
+    loadError: 'バックログの読み込みに失敗しました',
+    unitsShort: '{count}個不足',
+    daysDelayed: '{count}日',
+    daysDelayedOne: '{count}日',
+    table: {
+      orderId: '注文ID',
+      sku: 'SKU',
+      itemName: '品目名',
+      quantityNeeded: '必要数量',
+      quantityAvailable: '利用可能数量',
+      shortage: '不足数',
+      daysDelayed: '遅延日数',
+      priority: '優先度'
+    },
+    detail: {
+      title: '在庫不足の詳細',
+      priorityBadge: '優先度: {priority}',
+      shortageAmount: '不足数量',
+      daysDelayed: '遅延日数',
+      orderId: '注文ID',
+      itemSku: '品目SKU',
+      quantityNeeded: '必要数量',
+      quantityAvailable: '利用可能数量',
+      status: 'ステータス',
+      units: '{count}個',
+      days: '{count}日',
+      dayOne: '{count}日'
+    }
+  },
+
+  reports: {
+    title: '業績レポート',
+    description: '四半期の業績指標と月次推移を表示します',
+    quarterlyPerformance: '四半期業績',
+    monthlyRevenueTrend: '月次売上推移',
+    monthOverMonth: '前月比分析',
+    totalRevenueYtd: '年初来売上高',
+    avgMonthlyRevenue: '月平均売上高',
+    totalOrdersYtd: '年初来注文数',
+    bestQuarter: '最高業績四半期',
+    noData: '現在のフィルターに一致するレポートデータがありません',
+    loadError: 'レポートの読み込みに失敗しました',
+    notAvailable: '該当なし',
+    table: {
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総売上高',
+      avgOrderValue: '平均注文額',
+      fulfillmentRate: '履行率',
+      month: '月',
+      orders: '注文数',
+      revenue: '売上高',
+      change: '増減',
+      growthRate: '成長率'
+    }
+  },
+
   filters: {
     timePeriod: '期間',
     location: '場所',
@@ -369,6 +437,12 @@ export default {
 
   // Product Names
   productNames: {
+    // Backlog-only SKUs: these four appear in backlog_items.json but not in
+    // inventory.json, so they were missing from this map entirely.
+    'Oil Filter Cartridge': 'オイルフィルターカートリッジ',
+    'Electric Motor 5HP': '電動モータ 5HP',
+    'Pressure Relief Valve': '圧力逃がし弁',
+    'Industrial Widget Type A': '産業用ウィジェット タイプA',
     'Single Layer PCB Assembly': '単層PCB組立',
     'Dual Layer PCB Assembly': '二層PCB組立',
     'Multi Layer PCB Assembly': '多層PCB組立',
