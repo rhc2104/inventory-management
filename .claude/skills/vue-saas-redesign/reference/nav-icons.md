@@ -4,7 +4,14 @@ One per route. All are `24×24` viewBox, `stroke="currentColor"`, `stroke-width=
 `fill="none"`, `stroke-linecap="round"`, `stroke-linejoin="round"` — so they inherit the nav
 link's color automatically and need no fill management.
 
-Copy the inner paths into `NavIcon.vue`'s lookup keyed by these exact names.
+`NavIcon.vue` takes a `name` prop and renders one shared `<svg>` wrapper whose contents are a
+static `<g v-if="name === '...'">` / `<g v-else-if="name === '...'">` branch per icon below, one
+branch per row of the table — not a JS object of markup strings keyed by these names. A
+string-keyed lookup rendered with `v-html` was considered for this and rejected: it takes
+untrusted-shaped string interpolation to render markup for something that is fully static at
+build time, where a plain template branch does the same job with no `v-html` at all. Copy each
+icon's inner paths into its own `<g v-else-if="name === '<name>'">` branch, keyed by these exact
+names.
 
 | name | route |
 | --- | --- |
