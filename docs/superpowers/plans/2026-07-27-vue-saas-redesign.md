@@ -39,7 +39,21 @@ Backend tests must keep passing throughout as a collateral-damage guard: `cd tes
 - Create: `.claude/skills/vue-saas-redesign/reference/tokens.css`
 
 **Interfaces:**
-- Produces: the custom-property names every later task consumes — `--sp-1`…`--sp-6`, `--r-sm`, `--r-md`, `--ink`, `--ink-2`, `--muted`, `--border`, `--border-strong`, `--canvas`, `--surface`, `--hover`, the status trios, the `--side-*` ramp, `--fs-xs`…`--fs-xl`, `--shadow-overlay`, `--sidebar-w`, `--sidebar-w-collapsed`, `--toolbar-h`.
+- Produces: the complete set of custom-property names later tasks consume. This list is the
+  contract — it must enumerate every token in the file, with no summarizing shorthand, because a
+  token present in the CSS but absent here becomes undocumented surface area:
+  `--sp-1`, `--sp-2`, `--sp-3`, `--sp-4`, `--sp-5`, `--sp-6`;
+  `--r-sm`, `--r-md`;
+  `--ink`, `--ink-2`, `--muted`, `--border`, `--border-strong`, `--canvas`, `--surface`, `--hover`;
+  `--green`, `--green-bg`, `--green-ink`, `--blue`, `--blue-bg`, `--blue-ink`,
+  `--amber`, `--amber-bg`, `--amber-ink`, `--red`, `--red-bg`, `--red-ink`;
+  `--indigo-bg`, `--indigo-ink` (consumed by `.badge.stable` in Task 8);
+  `--side-bg`, `--side-border`, `--side-ink`, `--side-muted`, `--side-hover`;
+  `--fs-xs`, `--fs-sm`, `--fs-base`, `--fs-lg`, `--fs-xl`,
+  `--fs-stat` (consumed by `.stat-value` in Task 8);
+  `--red-tint` (consumed by `.error` in Task 8);
+  `--shadow-overlay`;
+  `--sidebar-w`, `--sidebar-w-collapsed`, `--toolbar-h`.
 
 - [ ] **Step 1: Create the token file**
 
