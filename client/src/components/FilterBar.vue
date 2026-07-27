@@ -1,6 +1,35 @@
 <template>
   <div class="filters-bar">
     <div class="filters-container">
+      <!-- Below 640px the sidebar is off-canvas (transform: translateX(-100%)
+           takes its own toggle button with it), so this is the only trigger
+           reachable from the content column. It lives in this sticky toolbar
+           rather than loose in App.vue so it stays reachable while scrolled. -->
+      <button
+        v-if="isOverlay"
+        type="button"
+        class="menu-trigger"
+        aria-label="Toggle navigation menu"
+        :aria-expanded="overlayOpen"
+        aria-controls="app-sidebar"
+        @click="toggle"
+      >
+        <svg
+          class="menu-icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
       <div class="filters-grid">
         <div class="filter-group">
           <label>{{ t('filters.timePeriod') }}</label>
@@ -72,6 +101,7 @@
 <script>
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import { useSidebar } from '../composables/useSidebar'
 
 export default {
   name: 'FilterBar',
@@ -86,6 +116,7 @@ export default {
     } = useFilters()
 
     const { t } = useI18n()
+    const { isOverlay, overlayOpen, toggle } = useSidebar()
 
     return {
       t,
@@ -94,7 +125,10 @@ export default {
       selectedCategory,
       selectedStatus,
       hasActiveFilters,
-      resetFilters
+      resetFilters,
+      isOverlay,
+      overlayOpen,
+      toggle
     }
   }
 }
@@ -102,93 +136,103 @@ export default {
 
 <style scoped>
 .filters-bar {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0.75rem 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: var(--sp-2) 0;
   position: sticky;
-  top: 70px;
+  /* Sticks to the top of the content column (.app-main), not the viewport —
+     there is no top nav anymore, so there is no offset to clear. */
+  top: 0;
   z-index: 90;
 }
 
 .filters-container {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 0 2rem;
+  /* No max-width/margin: auto here on purpose: this toolbar spans the full
+     content column edge-to-edge. The 1600px cap that keeps text content from
+     stretching on wide displays lives on .main-content in App.vue instead —
+     the sidebar only subtracts its own width, it doesn't impose a maximum. */
+  padding: 0 var(--sp-5);
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sp-4);
+}
+
+.menu-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sp-6);
+  height: var(--sp-6);
+  flex-shrink: 0;
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.menu-trigger:hover {
+  background: var(--canvas);
+  border-color: var(--muted);
+  color: var(--ink);
+}
+.menu-icon {
+  width: var(--sp-5);
+  height: var(--sp-5);
 }
 
 .filters-grid {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--sp-4);
   flex: 1;
 }
 
-.filter-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
+.filter-group { display: flex; align-items: center; gap: var(--sp-2); }
 .filter-group label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  color: var(--muted);
   white-space: nowrap;
 }
 
 .filter-select {
-  padding: 0.4rem 0.75rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  font-size: 0.813rem;
-  color: #0f172a;
-  background: white;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-sm);
+  font-size: var(--fs-sm);
+  color: var(--ink);
+  background: var(--surface);
   cursor: pointer;
-  transition: all 0.2s;
   font-weight: 500;
   min-width: 140px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
-
-.filter-select:hover {
-  border-color: #94a3b8;
-}
-
+.filter-select:hover { border-color: var(--muted); }
 .filter-select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 12%, transparent);
 }
 
 .reset-filters-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.4rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  color: #64748b;
+  padding: var(--sp-1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--muted);
   cursor: pointer;
-  transition: all 0.2s;
   flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
-
 .reset-filters-btn:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  color: #0f172a;
+  background: var(--canvas);
+  border-color: var(--border-strong);
+  color: var(--ink);
 }
-
-.reset-filters-btn:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-
-.reset-filters-btn svg {
-  width: 18px;
-  height: 18px;
-}
+.reset-filters-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.reset-filters-btn svg { width: 18px; height: 18px; }
 </style>

@@ -2,6 +2,8 @@
   <div class="language-switcher">
     <button
       class="language-button"
+      :class="{ compact }"
+      :aria-label="compact ? localeName : null"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
@@ -17,8 +19,9 @@
         <path d="M10 3C10 3 7.5 5.5 7.5 10C7.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
         <path d="M10 3C10 3 12.5 5.5 12.5 10C12.5 14.5 10 17 10 17" stroke="currentColor" stroke-width="1.5"/>
       </svg>
-      <span class="language-label">{{ localeName }}</span>
+      <span v-if="!compact" class="language-label">{{ localeName }}</span>
       <svg
+        v-if="!compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -58,6 +61,13 @@
 import { ref } from 'vue'
 import { useI18n } from '../composables/useI18n'
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentLocale, setLocale, availableLocales, localeName } = useI18n()
 
 const isDropdownOpen = ref(false)
@@ -96,25 +106,36 @@ const selectLanguage = (locale) => {
 .language-button {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 0.875rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  width: 100%;
+  gap: var(--sp-2);
+  /* 0.875rem (14px) is equidistant between --sp-3/--sp-4; rounded down to
+     --sp-3, matching ProfileMenu's trigger padding. */
+  padding: var(--sp-2) var(--sp-3);
+  background: transparent;
+  border: 1px solid var(--side-border);
+  border-radius: var(--r-md);
+  color: var(--side-ink);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
   font-size: 0.875rem;
-  color: #334155;
 }
 
 .language-button:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--side-hover);
+}
+
+/* Same fix as ProfileMenu's .profile-button.compact: icon-only so the
+   trigger fits inside the 64px collapsed rail instead of bleeding over the
+   content area. */
+.language-button.compact {
+  justify-content: center;
+  gap: 0;
+  padding: var(--sp-1) 0;
 }
 
 .globe-icon {
-  color: #64748b;
+  color: var(--side-muted);
   flex-shrink: 0;
 }
 
@@ -123,7 +144,7 @@ const selectLanguage = (locale) => {
 }
 
 .chevron {
-  color: #64748b;
+  color: var(--side-muted);
   transition: transform 0.2s ease;
   flex-shrink: 0;
 }
@@ -132,15 +153,19 @@ const selectLanguage = (locale) => {
   transform: rotate(180deg);
 }
 
+/* The trigger lives at the bottom of the left sidebar, so the menu opens
+   upward from it instead of downward from a top bar. It anchors left: 0
+   and can extend rightward past the sidebar edge because the sidebar
+   deliberately sets no overflow rule to clip it. */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
   min-width: 160px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-overlay);
   z-index: 1000;
   overflow: hidden;
 }
@@ -164,7 +189,7 @@ const selectLanguage = (locale) => {
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .dropdown-item.active {

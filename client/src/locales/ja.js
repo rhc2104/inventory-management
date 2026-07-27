@@ -6,6 +6,7 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    restocking: '補充発注',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -106,6 +107,7 @@ export default {
     title: '注文',
     description: '顧客注文の表示と管理',
     allOrders: 'すべての注文',
+    submittedOrders: '送信済み発注',
     totalOrders: '総注文数',
     totalRevenue: '総収益',
     avgOrderValue: '平均注文額',
@@ -125,7 +127,8 @@ export default {
       totalValue: '合計金額',
       status: 'ステータス',
       expectedDelivery: '予定配達日',
-      actualDelivery: '実際の配達日'
+      actualDelivery: '実際の配達日',
+      leadTime: 'リードタイム'
     }
   },
 
@@ -189,6 +192,43 @@ export default {
   },
 
   // Filters
+  restocking: {
+    title: '補充発注',
+    description: '予算を設定し、需要予測に基づく推奨品目を発注します',
+    availableBudget: '利用可能予算',
+    allocated: '割当額',
+    remaining: '残額',
+    itemsSelected: '{total}件中{count}件を選択',
+    recommendations: '推奨品目',
+    totalToRestockAll: '全品目の補充費用: {amount}',
+    daysCount: '{days}日',
+    placeOrder: '発注する',
+    placingOrder: '発注中...',
+    orderPlaced: '補充発注 {orderNumber} を送信しました',
+    orderFailed: '補充発注の送信に失敗しました',
+    noRecommendations: '現在のフィルターでは補充が必要な品目はありません',
+    noneInBudget: '現在の予算では選択できる品目がありません。予算を増やしてください',
+    skippedNote: '淡色の行は残予算に収まりません',
+    urgencyLabel: {
+      critical: '緊急',
+      watch: '注意',
+      healthy: '良好'
+    },
+    table: {
+      sku: 'SKU',
+      itemName: '品目名',
+      category: 'カテゴリ',
+      warehouse: '倉庫',
+      onHand: '在庫数',
+      reorderPoint: '発注点',
+      forecastChange: '予測変化',
+      recommendedQty: '推奨数量',
+      unitCost: '単価',
+      lineCost: '金額',
+      leadTime: 'リードタイム',
+      urgency: '緊急度'
+    }
+  },
   filters: {
     timePeriod: '期間',
     location: '場所',
@@ -204,6 +244,7 @@ export default {
     shipped: '出荷済み',
     processing: '処理中',
     backordered: 'バックオーダー',
+    submitted: '送信済み',
     inStock: '在庫あり',
     lowStock: '在庫僅少',
     adequate: '適量'

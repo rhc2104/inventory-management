@@ -65,23 +65,30 @@ class TestDemandEndpoints:
                 assert percent_change < 2.0, \
                     f"Item {item['item_name']} has {percent_change:.2f}% change, expected < 2%"
 
-    def test_demand_forecast_has_new_items(self, client):
-        """Test that new demand forecast items exist."""
-        response = client.get("/api/demand")
-        data = response.json()
+    def test_every_forecast_sku_exists_in_inventory(self, client):
+        """Test that forecasts join cleanly to real inventory items.
 
-        # Check for the new items we added
-        skus = [item["item_sku"] for item in data]
+        Forecasts previously referenced a stale product catalog, so 8 of 9 SKUs
+        pointed at products that no longer existed. Anything that joins demand
+        to cost (restocking, in particular) depends on this holding.
+        """
+        inventory = {i["sku"]: i for i in client.get("/api/inventory").json()}
 
-        # Should have Temperature Sensor Module and Logic Controller Board
-        assert "SNR-420" in skus, "Missing Temperature Sensor Module"
-        assert "CTL-330" in skus, "Missing Logic Controller Board"
+        data = client.get("/api/demand").json()
+        assert len(data) > 0
 
-        # Verify they are marked as stable
-        for item in data:
-            if item["item_sku"] in ["SNR-420", "CTL-330"]:
-                assert item["trend"].lower() == "stable", \
-                    f"New item {item['item_name']} should have stable trend"
+        for forecast in data:
+            assert forecast["item_sku"] in inventory, \
+                f"Forecast SKU {forecast['item_sku']} is not in inventory"
+            assert forecast["item_name"] == inventory[forecast["item_sku"]]["name"]
+
+    def test_every_inventory_item_has_a_forecast(self, client):
+        """Test that no inventory item is missing a demand forecast."""
+        forecast_skus = {f["item_sku"] for f in client.get("/api/demand").json()}
+
+        for item in client.get("/api/inventory").json():
+            assert item["sku"] in forecast_skus, \
+                f"Inventory item {item['sku']} has no demand forecast"
 
 
 class TestBacklogEndpoints:

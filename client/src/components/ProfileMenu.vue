@@ -2,14 +2,17 @@
   <div class="profile-menu">
     <button
       class="profile-button"
+      :class="{ compact }"
+      :aria-label="compact ? currentUser.name : null"
       @click="toggleDropdown"
       @blur="handleBlur"
     >
       <div class="avatar">
         {{ getInitials(currentUser.name) }}
       </div>
-      <span class="profile-name">{{ currentUser.name }}</span>
+      <span v-if="!compact" class="profile-name">{{ currentUser.name }}</span>
       <svg
+        v-if="!compact"
         class="chevron"
         :class="{ 'chevron-open': isDropdownOpen }"
         width="16"
@@ -78,6 +81,13 @@ import { ref, computed } from 'vue'
 import { useAuth } from '../composables/useAuth'
 import { useI18n } from '../composables/useI18n'
 
+defineProps({
+  compact: {
+    type: Boolean,
+    default: false
+  }
+})
+
 const { currentUser, logout, getInitials } = useAuth()
 const { t } = useI18n()
 
@@ -123,19 +133,33 @@ const handleLogout = () => {
 .profile-button {
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.5rem 0.875rem;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  width: 100%;
+  /* 0.625rem (10px) is equidistant between the --sp-2/--sp-3 steps; rounded
+     down to --sp-2 to keep the footer dense. */
+  gap: var(--sp-2);
+  /* 0.875rem (14px) is equidistant between --sp-3/--sp-4; rounded down to
+     --sp-3 for the same reason. */
+  padding: var(--sp-2) var(--sp-3);
+  background: transparent;
+  border: 1px solid var(--side-border);
+  border-radius: var(--r-md);
+  color: var(--side-ink);
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
 }
 
 .profile-button:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
+  background: var(--side-hover);
+}
+
+/* Collapsed rail is 64px; the uncollapsed trigger's ~166px of min-content
+   (avatar + name + chevron + padding) doesn't fit and was bleeding ~126px
+   over the content area. Icon-only avatar keeps everything inside the rail. */
+.profile-button.compact {
+  justify-content: center;
+  gap: 0;
+  padding: var(--sp-1) 0;
 }
 
 .avatar {
@@ -155,11 +179,11 @@ const handleLogout = () => {
 .profile-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--side-ink);
 }
 
 .chevron {
-  color: #64748b;
+  color: var(--side-muted);
   transition: transform 0.2s ease;
 }
 
@@ -167,25 +191,30 @@ const handleLogout = () => {
   transform: rotate(180deg);
 }
 
+/* The trigger lives at the bottom of the left sidebar, so the menu opens
+   upward from it instead of downward from a top bar. It anchors left: 0
+   and is allowed to extend rightward past the sidebar edge — the sidebar
+   sets no overflow, and this 280px menu is wider than even the expanded
+   rail, let alone the 64px collapsed one. */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
+  bottom: calc(100% + var(--sp-2));
+  left: 0;
   min-width: 280px;
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-overlay);
   z-index: 1000;
   overflow: hidden;
 }
 
 .dropdown-header {
-  padding: 1rem;
+  padding: var(--sp-4);
   display: flex;
-  gap: 0.875rem;
+  gap: var(--sp-3);
   align-items: center;
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .avatar-large {
@@ -247,7 +276,7 @@ const handleLogout = () => {
 }
 
 .dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--canvas);
 }
 
 .dropdown-item svg {

@@ -6,6 +6,7 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -106,6 +107,7 @@ export default {
     title: 'Orders',
     description: 'View and manage customer orders',
     allOrders: 'All Orders',
+    submittedOrders: 'Submitted Orders',
     totalOrders: 'Total Orders',
     totalRevenue: 'Total Revenue',
     avgOrderValue: 'Avg Order Value',
@@ -125,7 +127,8 @@ export default {
       totalValue: 'Total Value',
       status: 'Status',
       expectedDelivery: 'Expected Delivery',
-      actualDelivery: 'Actual Delivery'
+      actualDelivery: 'Actual Delivery',
+      leadTime: 'Lead Time'
     }
   },
 
@@ -189,6 +192,43 @@ export default {
   },
 
   // Filters
+  restocking: {
+    title: 'Restocking',
+    description: 'Set a budget and order the items demand forecasts say you need most',
+    availableBudget: 'Available Budget',
+    allocated: 'Allocated',
+    remaining: 'Remaining',
+    itemsSelected: '{count} of {total} items selected',
+    recommendations: 'Recommended Items',
+    totalToRestockAll: 'Cost to restock everything: {amount}',
+    daysCount: '{days} days',
+    placeOrder: 'Place Order',
+    placingOrder: 'Placing order...',
+    orderPlaced: 'Restock order {orderNumber} submitted',
+    orderFailed: 'Failed to place restock order',
+    noRecommendations: 'No items need restocking for the current filters',
+    noneInBudget: 'Nothing fits the current budget - raise it to select items',
+    skippedNote: 'Dimmed rows do not fit the remaining budget',
+    urgencyLabel: {
+      critical: 'Critical',
+      watch: 'Watch',
+      healthy: 'Healthy'
+    },
+    table: {
+      sku: 'SKU',
+      itemName: 'Item Name',
+      category: 'Category',
+      warehouse: 'Warehouse',
+      onHand: 'On Hand',
+      reorderPoint: 'Reorder Point',
+      forecastChange: 'Forecast Change',
+      recommendedQty: 'Recommended Qty',
+      unitCost: 'Unit Cost',
+      lineCost: 'Line Cost',
+      leadTime: 'Lead Time',
+      urgency: 'Urgency'
+    }
+  },
   filters: {
     timePeriod: 'Time Period',
     location: 'Location',
@@ -204,6 +244,7 @@ export default {
     shipped: 'Shipped',
     processing: 'Processing',
     backordered: 'Backordered',
+    submitted: 'Submitted',
     inStock: 'In Stock',
     lowStock: 'Low Stock',
     adequate: 'Adequate'

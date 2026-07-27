@@ -1,0 +1,70 @@
+/* Design tokens for the SaaS shell redesign.
+   Values consolidate the palette CLAUDE.md documents; an audit found 51 unique
+   color literals and 26 ad-hoc rem spacing values, which these replace. */
+:root {
+  /* Spacing — the only six values the shell may use */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+
+  /* Radius — nothing larger; large radii read as soft, which was rejected */
+  --r-sm: 4px;
+  --r-md: 6px;
+
+  /* Neutral ramp */
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --canvas: #f8fafc;
+  --surface: #ffffff;
+  --hover: #f1f5f9;
+
+  /* Status — foreground / background / text-on-background */
+  --green: #059669;
+  --green-bg: #d1fae5;
+  --green-ink: #065f46;
+  --blue: #2563eb;
+  --blue-bg: #dbeafe;
+  --blue-ink: #1e40af;
+  --amber: #b45309;
+  --amber-bg: #fef3c7;
+  --amber-ink: #92400e;
+  --red: #dc2626;
+  --red-bg: #fecaca;
+  --red-ink: #991b1b;
+  --indigo-bg: #e0e7ff;
+  --indigo-ink: #3730a3;
+
+  /* Sidebar dark ramp, derived from ink */
+  --side-bg: #0f172a;
+  /* Lightened one step past --side-hover so a hovered nav link next to the
+     footer border doesn't make the border seam disappear. */
+  --side-border: #2d3748;
+  --side-ink: #e2e8f0;
+  --side-muted: #94a3b8;
+  --side-hover: #1e293b;
+
+  /* Type — 5 steps, plus one for the oversized KPI figure */
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.813rem;
+  --fs-base: 0.875rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-stat: 1.75rem;
+
+  /* Single-use tint behind .error. Tokenized so the shell can contain
+     literally zero magic numbers. */
+  --red-tint: #fef2f2;
+
+  /* Exactly one shadow, for overlays and dropdowns only. Never on cards. */
+  --shadow-overlay: 0 10px 25px rgba(15, 23, 42, 0.12);
+
+  /* Layout */
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 64px;
+}
