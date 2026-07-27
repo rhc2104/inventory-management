@@ -106,11 +106,15 @@ export default {
   border-bottom: 1px solid var(--border);
   padding: var(--sp-2) 0;
   position: sticky;
+  /* Sticks to the top of the content column (.app-main), not the viewport —
+     there is no top nav anymore, so there is no offset to clear. */
   top: 0;
   z-index: 90;
 }
 
 .filters-container {
+  /* No max-width/margin: auto centering here — the sidebar layout already
+     constrains the content column's width, so this bar doesn't need to. */
   padding: 0 var(--sp-5);
   display: flex;
   align-items: center;
@@ -142,6 +146,7 @@ export default {
   cursor: pointer;
   font-weight: 500;
   min-width: 140px;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .filter-select:hover { border-color: var(--muted); }
 .filter-select:focus {
@@ -161,6 +166,7 @@ export default {
   color: var(--muted);
   cursor: pointer;
   flex-shrink: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 .reset-filters-btn:hover:not(:disabled) {
   background: var(--canvas);
