@@ -1095,7 +1095,14 @@ through a token — there are no whitelisted exceptions. Any hit is a magic numb
 
 - [ ] **Step 3: All seven routes, no console errors**
 
-Playwright MCP: visit each of `/`, `/inventory`, `/orders`, `/spending`, `/demand`, `/restocking`, `/reports`; collect `browser_console_messages` after each. Expected: no `[ERROR]` entries other than the pre-existing `/api/tasks` 404, which is a known dead endpoint documented in `docs/architecture.html` and unrelated to this change.
+Playwright MCP: visit each of `/`, `/inventory`, `/orders`, `/spending`, `/demand`, `/restocking`, `/reports`; collect `browser_console_messages` after each.
+
+Expected: no `[ERROR]` or `[WARN]` entries **other than these two pre-existing defects**, both unrelated to this change and both out of scope (this redesign is presentation-only):
+
+1. A 404 on `GET /api/tasks` — `api.js` calls four task endpoints the backend never implemented. Fires on every page load from `App.vue`'s `onMounted`.
+2. `Failed to resolve component: PurchaseOrderModal` on `/` — `Dashboard.vue:289` renders `<PurchaseOrderModal>`, which is never imported and has no file in `client/src/components/`. Vue renders nothing in its place.
+
+Both are orphans of an abandoned purchase-order feature, documented in `docs/architecture.html`. Any error or warning **beyond these two** is a regression this task introduced and must be fixed. Do not silently widen this whitelist: if a third pre-existing error appears, stop and report it rather than adding it here.
 
 - [ ] **Step 4: Collapse toggle and persistence**
 
