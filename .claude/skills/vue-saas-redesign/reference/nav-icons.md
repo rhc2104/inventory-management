@@ -21,6 +21,7 @@ names.
 | `finance` | `/spending` |
 | `demand` | `/demand` |
 | `restocking` | `/restocking` |
+| `backlog` | `/backlog` |
 | `reports` | `/reports` |
 
 ## overview
@@ -64,6 +65,13 @@ names.
 ```html
 <path d="M21 12a9 9 0 1 1-3-6.7" />
 <path d="M21 4v5h-5" />
+```
+
+## backlog
+```html
+<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" />
+<path d="M12 9v4" />
+<path d="M12 17h.01" />
 ```
 
 ## reports

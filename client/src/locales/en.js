@@ -8,6 +8,7 @@ export default {
     demandForecast: 'Demand Forecast',
     restocking: 'Restocking',
     reports: 'Reports',
+    backlog: 'Backlog',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -230,6 +231,47 @@ export default {
       urgency: 'Urgency'
     }
   },
+  backlog: {
+    title: 'Backlog Management',
+    description: 'Track and resolve inventory shortages',
+    highPriority: 'High Priority',
+    mediumPriority: 'Medium Priority',
+    lowPriority: 'Low Priority',
+    totalItems: 'Total Backlog Items',
+    backlogItems: 'Backlog Items',
+    noItems: 'No backlog items - all orders can be fulfilled',
+    loadError: 'Failed to load backlog',
+    unitsShort: '{count} units short',
+    // t() has no pluralization, so the singular is its own key. Japanese needs
+    // no such split, which is why both ja values are identical.
+    daysDelayed: '{count} days',
+    daysDelayedOne: '{count} day',
+    table: {
+      orderId: 'Order ID',
+      sku: 'SKU',
+      itemName: 'Item Name',
+      quantityNeeded: 'Quantity Needed',
+      quantityAvailable: 'Quantity Available',
+      shortage: 'Shortage',
+      daysDelayed: 'Days Delayed',
+      priority: 'Priority'
+    },
+    detail: {
+      title: 'Inventory Shortage Details',
+      priorityBadge: '{priority} Priority',
+      shortageAmount: 'Shortage Amount',
+      daysDelayed: 'Days Delayed',
+      orderId: 'Order ID',
+      itemSku: 'Item SKU',
+      quantityNeeded: 'Quantity Needed',
+      quantityAvailable: 'Quantity Available',
+      status: 'Status',
+      units: '{count} units',
+      days: '{count} days',
+      dayOne: '{count} day'
+    }
+  },
+
   reports: {
     title: 'Performance Reports',
     description: 'View quarterly performance metrics and monthly trends',

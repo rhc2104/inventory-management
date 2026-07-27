@@ -94,6 +94,7 @@ const navItems = computed(() => [
   { path: '/spending', label: t('nav.finance'), icon: 'finance' },
   { path: '/demand', label: t('nav.demandForecast'), icon: 'demand' },
   { path: '/restocking', label: t('nav.restocking'), icon: 'restocking' },
+  { path: '/backlog', label: t('nav.backlog'), icon: 'backlog' },
   { path: '/reports', label: t('nav.reports'), icon: 'reports' }
 ])
 </script>
