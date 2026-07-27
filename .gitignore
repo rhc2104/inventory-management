@@ -51,5 +51,8 @@ logs/
 # Playwright MCP artifacts
 .playwright-mcp/
 
+# Brainstorming session mockups (superpowers visual companion)
+.superpowers/
+
 # Environment variables
 .env
