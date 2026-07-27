@@ -167,6 +167,11 @@ const handleLogout = () => {
   transform: rotate(180deg);
 }
 
+/* The trigger lives at the bottom of the left sidebar, so the menu opens
+   upward from it instead of downward from a top bar. It anchors left: 0
+   and is allowed to extend rightward past the sidebar edge — the sidebar
+   sets no overflow, and this 280px menu is wider than even the expanded
+   rail, let alone the 64px collapsed one. */
 .dropdown-menu {
   position: absolute;
   bottom: calc(100% + var(--sp-2));

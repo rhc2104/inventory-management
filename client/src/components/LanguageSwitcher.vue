@@ -131,6 +131,10 @@ const selectLanguage = (locale) => {
   transform: rotate(180deg);
 }
 
+/* The trigger lives at the bottom of the left sidebar, so the menu opens
+   upward from it instead of downward from a top bar. It anchors left: 0
+   and can extend rightward past the sidebar edge because the sidebar
+   deliberately sets no overflow rule to clip it. */
 .dropdown-menu {
   position: absolute;
   bottom: calc(100% + var(--sp-2));
