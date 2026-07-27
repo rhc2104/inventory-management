@@ -87,8 +87,6 @@ const { t } = useI18n()
 // closed/off-canvas and desktop-collapsed rail states hide labels.
 const showLabels = computed(() => !isCollapsed.value || (isOverlay.value && overlayOpen.value))
 
-// /reports has no i18n key in the current app (App.vue hardcodes the English
-// literal) — preserved as-is rather than inventing nav.reports.
 const navItems = computed(() => [
   { path: '/', label: t('nav.overview'), icon: 'overview' },
   { path: '/inventory', label: t('nav.inventory'), icon: 'inventory' },
@@ -96,7 +94,7 @@ const navItems = computed(() => [
   { path: '/spending', label: t('nav.finance'), icon: 'finance' },
   { path: '/demand', label: t('nav.demandForecast'), icon: 'demand' },
   { path: '/restocking', label: t('nav.restocking'), icon: 'restocking' },
-  { path: '/reports', label: 'Reports', icon: 'reports' }
+  { path: '/reports', label: t('nav.reports'), icon: 'reports' }
 ])
 </script>
 
